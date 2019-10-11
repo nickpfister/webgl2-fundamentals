@@ -1,96 +1,10 @@
 "use strict";
 
-// var vertexShaderSource = `#version 300 es
-
-// //This receives input from a buffer
-// in vec4 a_position;
-
-// void main(){
-//     //Special variable a vertex shader is responsible for setting
-//     gl_Position = a_position;
-// }
-// `;
-
-// Here's the 2D version
-var vertexShaderSource = `#version 300 es
-
-//This receives input from a buffer
-in vec2 a_position;
-
-uniform vec2 u_resolution;
-
-// In here we must convert from pixels to clip space
-void main(){
-    // Convert the position from pixels to 0.0 to 1.0
-    vec2 zeroToOne = a_position / u_resolution;
-
-    // Convert from 0-1 to 0-2
-    vec2 zeroToTwo = zeroToOne * 2.0;
-
-    // Convert from 0-2 to -1->+1 (clipspace)
-    vec2 clipSpace = zeroToTwo - 1.0;
-
-    gl_Position = vec4(clipSpace * vec2(1, -1), 0, 1);
-}
-`;
-
-var fragmentShaderSource = `#version 300 es
-
-//Define the precision of floats
-precision mediump float;
-
-uniform vec4 u_color;
-
-out vec4 outColor;
-
-void main(){
-    outColor = u_color;
-}`;
-
 function randomInt(range) {
   return Math.floor(Math.random() * range);
 }
-
-function setRectangle(gl, x, y, width, height) {
-  var x1 = x;
-  var x2 = x + width;
-  var y1 = y;
-  var y2 = y + height;
-
-  gl.bufferData(
-    gl.ARRAY_BUFFER,
-    new Float32Array([x1, y1, x2, y1, x1, y2, x1, y2, x2, y1, x2, y2]),
-    gl.STATIC_DRAW
-  );
-}
-
 // Creates a shader given a rendering context, shader type, and source code for the shader
-function createShader(gl, type, source) {
-  var shader = gl.createShader(type);
-  gl.shaderSource(shader, source);
-  gl.compileShader(shader);
-  var success = gl.getShaderParameter(shader, gl.COMPILE_STATUS);
-  if (success) {
-    return shader;
-  }
 
-  console.log(gl.getShaderInfoLog(shader));
-  gl.deleteShader(shader);
-}
-
-function createProgram(gl, vertexShader, fragmentShader) {
-  var program = gl.createProgram();
-  gl.attachShader(program, vertexShader);
-  gl.attachShader(program, fragmentShader);
-  gl.linkProgram(program);
-  var success = gl.getProgramParameter(program, gl.LINK_STATUS);
-  if (success) {
-    return program;
-  }
-
-  console.log(gl.getProgramInfoLog(program));
-  gl.deleteProgram(program);
-}
 
 function main() {
   //Get the canvas element from index.html
